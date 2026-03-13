@@ -1,4 +1,5 @@
 "use client";
+
 import { createContext, useContext, useEffect, useState } from "react";
 
 type Theme = "light" | "dark";
@@ -13,20 +14,33 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     const [theme, setTheme] = useState<Theme>("light");
 
+    // Ініціалізація теми
     useEffect(() => {
-        // Зчитуємо тему з localStorage
         const saved = localStorage.getItem("theme") as Theme | null;
-        if (saved) setTheme(saved);
+
+        if (saved) {
+            setTheme(saved);
+            document.documentElement.classList.add(saved);
+        } else {
+            const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+            const initial = systemDark ? "dark" : "light";
+
+            setTheme(initial);
+            document.documentElement.classList.add(initial);
+        }
     }, []);
 
+    // Синхронізація теми
     useEffect(() => {
-        // Зберігаємо і додаємо клас у <html>
         localStorage.setItem("theme", theme);
+
         document.documentElement.classList.remove("light", "dark");
         document.documentElement.classList.add(theme);
     }, [theme]);
 
-    const toggleTheme = () => setTheme((prev) => (prev === "light" ? "dark" : "light"));
+    const toggleTheme = () => {
+        setTheme((prev) => (prev === "light" ? "dark" : "light"));
+    };
 
     return (
         <ThemeContext.Provider value={{ theme, toggleTheme }}>
