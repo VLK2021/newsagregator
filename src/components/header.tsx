@@ -1,10 +1,16 @@
 "use client";
 
-import Image from "next/image";
 import LangSwitcher from "@/components/LangSwitcher";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
+import {useLanguage} from "@/context";
+import uk from "@/locales/uk";
+import en from "@/locales/en";
 
 export default function HeaderComponent() {
+    const { lang } = useLanguage();
+    const t = lang === "uk" ? uk : en;
+
+
     return (
         <header
             className="
@@ -50,7 +56,7 @@ export default function HeaderComponent() {
           pointer-events-none
         "
                 >
-                    News Aggregator
+                    {t.title}
                 </div>
 
                 {/* RIGHT - CONTROLS */}
