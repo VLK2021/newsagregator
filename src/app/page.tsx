@@ -1,11 +1,5 @@
+import NewsPageContent from "@/components/news/NewsPageContent";
 
 export default function Home() {
-
-  return (
-      <div
-          className="min-h-screen text-[var(--color-text)] bg-[var(--color-background)] px-1 md:px-8 py-3 flex flex-col gap-4"
-      >
-      news
-    </div>
-  );
+    return <NewsPageContent />;
 }

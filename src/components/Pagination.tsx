@@ -3,20 +3,27 @@
 import React, { useState, useEffect, useCallback } from "react";
 
 export default function Pagination({
+                                       page = 1,
                                        limit,
                                        totalItems = 0,
                                        onPageChange,
                                    }: {
+    page?: number;
     limit: number;
     totalItems?: number;
     onPageChange: (page: number) => void;
 }) {
-    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(page);
     const totalPages = Math.max(1, Math.ceil(totalItems / limit));
 
+    useEffect(() => {
+        setCurrentPage(page);
+    }, [page]);
+
     const handlePageChange = useCallback(
-        (page: number) => {
-            const numericPage = Number(page);
+        (nextPage: number) => {
+            const numericPage = Number(nextPage);
+
             if (numericPage >= 1 && numericPage <= totalPages) {
                 setCurrentPage(numericPage);
                 onPageChange?.(numericPage);
@@ -35,21 +42,20 @@ export default function Pagination({
             setCurrentPage(1);
             onPageChange?.(1);
         }
-    }, [totalPages]);
+    }, [currentPage, totalPages, onPageChange]);
 
     return (
         <div
             className="
-        flex flex-wrap items-center justify-center gap-3 mt-2 py-1 px-4 border
-        transition-colors duration-300
-      "
+                flex flex-wrap items-center justify-center gap-3 rounded-2xl border px-4 py-3
+                transition-colors duration-300
+            "
             style={{
                 backgroundColor: "var(--color-card)",
                 borderColor: "var(--color-border)",
                 color: "var(--color-text)",
             }}
         >
-            {/* Prev button */}
             <button
                 className="px-3 py-2 rounded-md border text-sm transition-all duration-200"
                 style={{
@@ -64,36 +70,24 @@ export default function Pagination({
                 &#60;
             </button>
 
-            {/* First page */}
             <button
                 className={`px-3 py-2 rounded-md border text-sm transition-all duration-200 ${
                     currentPage === 1 ? "font-semibold" : ""
                 }`}
                 style={{
-                    backgroundColor:
-                        currentPage === 1
-                            ? "var(--color-brand)"
-                            : "transparent",
-                    borderColor:
-                        currentPage === 1
-                            ? "var(--color-brand)"
-                            : "var(--color-border)",
-                    color:
-                        currentPage === 1
-                            ? "#fff"
-                            : "var(--color-text)",
+                    backgroundColor: currentPage === 1 ? "var(--color-brand)" : "transparent",
+                    borderColor: currentPage === 1 ? "var(--color-brand)" : "var(--color-border)",
+                    color: currentPage === 1 ? "#fff" : "var(--color-text)",
                 }}
                 onClick={() => handlePageChange(1)}
             >
                 1
             </button>
 
-            {/* Left dots */}
             {currentPage > 3 && (
                 <span style={{ color: "var(--color-text-muted)" }}>...</span>
             )}
 
-            {/* Previous page */}
             {currentPage > 2 && (
                 <button
                     className="px-3 py-2 rounded-md border text-sm transition-all duration-200"
@@ -108,7 +102,6 @@ export default function Pagination({
                 </button>
             )}
 
-            {/* Current page */}
             {currentPage !== 1 && currentPage !== totalPages && (
                 <button
                     className="px-3 py-2 rounded-md border text-sm font-semibold transition-all duration-200"
@@ -123,7 +116,6 @@ export default function Pagination({
                 </button>
             )}
 
-            {/* Next page */}
             {currentPage < totalPages - 1 && (
                 <button
                     className="px-3 py-2 rounded-md border text-sm transition-all duration-200"
@@ -138,30 +130,19 @@ export default function Pagination({
                 </button>
             )}
 
-            {/* Right dots */}
             {currentPage < totalPages - 2 && (
                 <span style={{ color: "var(--color-text-muted)" }}>...</span>
             )}
 
-            {/* Last page */}
             {totalPages > 1 && (
                 <button
                     className={`px-3 py-2 rounded-md border text-sm transition-all duration-200 ${
                         currentPage === totalPages ? "font-semibold" : ""
                     }`}
                     style={{
-                        backgroundColor:
-                            currentPage === totalPages
-                                ? "var(--color-brand)"
-                                : "transparent",
-                        borderColor:
-                            currentPage === totalPages
-                                ? "var(--color-brand)"
-                                : "var(--color-border)",
-                        color:
-                            currentPage === totalPages
-                                ? "#fff"
-                                : "var(--color-text)",
+                        backgroundColor: currentPage === totalPages ? "var(--color-brand)" : "transparent",
+                        borderColor: currentPage === totalPages ? "var(--color-brand)" : "var(--color-border)",
+                        color: currentPage === totalPages ? "#fff" : "var(--color-text)",
                     }}
                     onClick={() => handlePageChange(totalPages)}
                 >
@@ -169,7 +150,6 @@ export default function Pagination({
                 </button>
             )}
 
-            {/* Next button */}
             <button
                 className="px-3 py-2 rounded-md border text-sm transition-all duration-200"
                 style={{
@@ -187,14 +167,14 @@ export default function Pagination({
                 &#62;
             </button>
 
-            {/* Go to page */}
-            <div className="flex items-center gap-2 ml-4">
-        <span
-            className="text-sm"
-            style={{ color: "var(--color-text-muted)" }}
-        >
-          Go to
-        </span>
+            <div className="flex items-center gap-2 ml-1 sm:ml-4">
+                <span
+                    className="text-sm"
+                    style={{ color: "var(--color-text-muted)" }}
+                >
+                    Go to
+                </span>
+
                 <input
                     type="number"
                     value={currentPage}
@@ -202,9 +182,9 @@ export default function Pagination({
                     min={1}
                     max={totalPages}
                     className="
-            w-16 px-2 py-1 text-sm rounded-md border text-center
-            transition-all duration-200 focus:outline-none focus:ring-2
-          "
+                        w-16 px-2 py-1 text-sm rounded-md border text-center
+                        transition-all duration-200 focus:outline-none focus:ring-2
+                    "
                     style={{
                         backgroundColor: "var(--color-background)",
                         borderColor: "var(--color-border)",
@@ -213,13 +193,12 @@ export default function Pagination({
                 />
             </div>
 
-            {/* Total items */}
             <span
-                className="text-sm ml-4"
+                className="text-sm ml-1 sm:ml-4"
                 style={{ color: "var(--color-text-muted)" }}
             >
-        Total: {totalItems}
-      </span>
+                Total: {totalItems}
+            </span>
         </div>
     );
 }
