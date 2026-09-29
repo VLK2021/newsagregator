@@ -30,6 +30,7 @@ export default function RootLayout({
             className={`${geistSans.variable} ${geistMono.variable} antialiased w-full bg-[var(--color-background)] text-[var(--color-text)] transition-theme`}
         >
 
+
         <ThemeProvider>
             <LanguageProvider>
                 <HeaderComponent/>
